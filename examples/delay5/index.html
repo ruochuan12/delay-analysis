@@ -11,19 +11,15 @@
     </script>
     <script>
         (async () => {
-            const abortController = new AbortController();
+            const delayedPromise = delay5(1000, {value: '我是若川'});
 
             setTimeout(() => {
-                abortController.abort();
-            }, 500);
+                delayedPromise.clear();
+            }, 300);
 
-            try {
-                await delay5(1000, {signal: abortController.signal});
-            } catch (error) {
-                // 500 milliseconds later
-                console.log(error.name)
-                //=> 'AbortError'
-            }
+            // 300 milliseconds later
+            console.log(await delayedPromise);
+            //=> '我是若川'
         })();
     </script>
 </body>

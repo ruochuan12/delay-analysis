@@ -1,25 +1,24 @@
-// 
 const delay1 = (ms) => {
-    return new Promise((relove, reject) => {
+    return new Promise((resolve, reject) => {
         setTimeout(() => {
-            relove();
+            resolve();
         }, ms);
     });
 }
 
 const delay2 = (ms, { value } = {}) => {
-    return new Promise((relove, reject) => {
+    return new Promise((resolve, reject) => {
         setTimeout(() => {
-            relove(value);
+            resolve(value);
         }, ms);
     });
 }
 
 const delay3 = (ms, {value, willResolve} = {}) => {
-    return new Promise((relove, reject) => {
+    return new Promise((resolve, reject) => {
         setTimeout(() => {
             if(willResolve){
-                relove(value);
+                resolve(value);
             }
             else{
                 reject(value);

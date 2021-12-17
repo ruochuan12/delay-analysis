@@ -2,10 +2,10 @@
 const randomInteger = (minimum, maximum) => Math.floor((Math.random() * (maximum - minimum + 1)) + minimum);
 
 const createDelay = ({willResolve}) => (ms, {value} = {}) => {
-    return new Promise((relove, reject) => {
+    return new Promise((resolve, reject) => {
         setTimeout(() => {
             if(willResolve){
-                relove(value);
+                resolve(value);
             }
             else{
                 reject(value);

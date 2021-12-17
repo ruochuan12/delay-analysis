@@ -13,6 +13,7 @@ const createDelay = ({willResolve}) => (ms, {value, signal} = {}) => {
 	}
 
     let timeoutId;
+    let settle;
     let rejectFn;
     const signalListener = () => {
         clearTimeout(timeoutId);
@@ -23,30 +24,37 @@ const createDelay = ({willResolve}) => (ms, {value, signal} = {}) => {
 			signal.removeEventListener('abort', signalListener);
 		}
 	};
-    const delayPromise = new Promise((relove, reject) => {
+    const delayPromise = new Promise((resolve, reject) => {
+        settle = () => {
+			cleanup();
+			if (willResolve) {
+				resolve(value);
+			} else {
+				reject(value);
+			}
+		};
+
         rejectFn = reject;
-        timeoutId = setTimeout(() => {
-            cleanup();
-            if(willResolve){
-                relove(value);
-            }
-            else{
-                reject(value);
-            }
-        }, ms);
+        timeoutId = setTimeout(settle, ms);
     });
     
     if (signal) {
 		signal.addEventListener('abort', signalListener, {once: true});
 	}
 
+    delayPromise.clear = () => {
+		clearTimeout(timeoutId);
+		timeoutId = null;
+		settle();
+	};
+
     return delayPromise;
 }
 
-const createWithTimers = clearAndSet => {
-    const delay = createDelay({...clearAndSet, willResolve: true});
-    delay.reject = createDelay({...clearAndSet, willResolve: false});
+const createWithTimers = () => {
+    const delay = createDelay({willResolve: true});
+    delay.reject = createDelay({willResolve: false});
     delay.range = (minimum, maximum, options) => delay(randomInteger(minimum, maximum), options);
     return delay;
 }
-const delay5 = createWithTimers();
+const delay6 = createWithTimers();
